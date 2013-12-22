@@ -16,15 +16,15 @@ class BasicWorkerTest
     @Test
     public function constructTest():Void
     {
-        var agency:TestWorkerAgency = new TestWorkerAgency(null, null);
-        agency.start();
-        agency.die();
+        var boss:TestBoss = new TestBoss(null, null);
+        boss.start();
+        boss.die();
     }
 
     @AsyncTest
     public function volleyTest(factory:AsyncFactory):Void
     {
-        var agency:TestWorkerAgency = null;
+        var boss:TestBoss = null;
         var last:Int = 0;
         var max:Int = 10;
 
@@ -34,48 +34,37 @@ class BasicWorkerTest
             var i:Int = Std.parseInt(val);
             Assert.areEqual(last, i);
             if (i == max) {
-                agency.die();
+                boss.die();
                 resultHandler();
             } else {
                 last++;
-                agency.send(last);
+                boss.send(last);
             }
         }
 
-        agency = new TestWorkerAgency(onReceive, null);
-        agency.start();
-        agency.send(last);
+        boss = new TestBoss(onReceive, null);
+        boss.start();
+        boss.send(last);
     }
 
     @AsyncTest
     public function errorTest(factory:AsyncFactory):Void
     {
-        var agency:TestWorkerAgency = null;
+        var boss:TestBoss = null;
 
         var resultHandler = factory.createHandler(this, function() {}, 1000);
 
-        function onError():Void {
-            agency.die();
+        function onError(error:Dynamic):Void {
+            boss.die();
             resultHandler();
         }
 
-        agency = new TestWorkerAgency(null, onError);
-        agency.start();
-        agency.send(-1);
+        boss = new TestBoss(null, onError);
+        boss.start();
+        boss.send(-1);
     }
 }
 
-class TestWorkerAgency extends BasicBoss<Int, String> {
-
-    var onReceive:String->Void;
-    var onError:Void->Void;
-
-    public function new(onReceive:String->Void, onError:Void->Void):Void {
-        super(Golem.rise('testWorker.hxml'));
-        this.onReceive = onReceive;
-        this.onError = onError;
-    }
-
-    override function receive(data:String):Void onReceive(Std.string(data));
-    override function onErrorIncoming(error:Dynamic):Void onError();
+class TestBoss extends QuickBoss<Int, String> {
+    public function new(onReceive, onError):Void super(Golem.rise('testWorker.hxml'), onReceive, onError);
 }

@@ -19,9 +19,10 @@ package net.rezmason.utils.workers;
     #elseif js
         var self:Dynamic;
     #elseif (neko || cpp)
-        var dead:Bool;
         var outgoing:U->Void;
     #end
+
+    var dead:Bool;
 
     public function new():Void {
         #if flash
@@ -31,9 +32,9 @@ package net.rezmason.utils.workers;
         #elseif js
             self = untyped __js__('self');
             self.onmessage = onIncoming;
-        #elseif (neko || cpp)
-            dead = false;
         #end
+
+        dead = false;
     }
 
     @:final function send(data:U):Void {

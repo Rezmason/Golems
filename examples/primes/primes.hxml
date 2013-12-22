@@ -1,19 +1,19 @@
 -main Primes
 -neko Primes.n
--cp ../src
+-cp ../../src
 
 --next
 
 -main Primes
 -swf Primes.swf
 -swf-version 11.4
--cp ../src
+-cp ../../src
 
 --next
 
 -main Primes
 -js Primes.js
--cp ../src
+-cp ../../src
 
 --next
 
@@ -21,7 +21,7 @@
 -main PrimeIntegerGenerator
 -swf pig.swf
 -swf-version 11.4
--cp ../src
+-cp ../../src
 -dce no
 
 --next
@@ -29,5 +29,5 @@
 ##GOLEM##
 -main PrimeIntegerGenerator
 -js pig.js
--cp ../src
+-cp ../../src
 -dce no
