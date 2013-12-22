@@ -1,0 +1,31 @@
+#Flash 9+
+-main TestMain
+-lib hamcrest
+-lib munit
+-cp src
+
+-cp test
+-swf-version 11.4
+-swf build/as3_test.swf
+--next
+
+# JavaScript
+-main TestMain
+-lib hamcrest
+-lib munit
+-cp src
+
+-cp test
+-js build/js_test.js
+#
+--next
+
+# Neko
+
+-main TestMain
+-lib hamcrest
+-lib munit
+-cp src
+
+-cp test
+-neko build/neko_test.n

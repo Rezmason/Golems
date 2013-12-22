@@ -1,0 +1,18 @@
+##GOLEM##
+-main net.rezmason.utils.workers.TestWorker
+-swf golems/TestWorker.swf
+-swf-version 11.4
+-cp test
+-cp src
+#-debug
+-dce no
+
+--next
+
+##GOLEM##
+-main net.rezmason.utils.workers.TestWorker
+-js golems/TestWorker.js
+-cp test
+-cp src
+#-debug
+-dce no
