@@ -13,13 +13,13 @@ import haxe.io.Bytes;
 #end
 
 #if (flash || js)
-    typedef Core<T, U> = Bytes;
+    typedef Core<TInput, TOutput> = Bytes;
 #elseif (neko || cpp)
-    typedef Core<T, U> = Class<BasicWorker<T, U>>;
+    typedef Core<TInput, TOutput> = Class<BasicWorker<TInput, TOutput>>;
     typedef Worker = Thread;
 #end
 
-class BasicBoss<T, U> {
+class BasicBoss<TInput, TOutput> {
 
     var worker:Worker;
 
@@ -28,7 +28,7 @@ class BasicBoss<T, U> {
         var outgoing:MessageChannel;
     #end
 
-    public function new(core:Core<T, U>):Void {
+    public function new(core:Core<TInput, TOutput>):Void {
         #if flash
             worker = WorkerDomain.current.createWorker(core.getData());
             incoming = worker.createMessageChannel(Worker.current);
@@ -60,7 +60,7 @@ class BasicBoss<T, U> {
         #end
     }
 
-    public function send(data:T):Void {
+    public function send(data:TInput):Void {
         #if flash
             outgoing.send(data);
         #elseif js
@@ -70,7 +70,7 @@ class BasicBoss<T, U> {
         #end
     }
 
-    function receive(data:U):Void {}
+    function receive(data:TOutput):Void {}
 
     function onIncoming(data:Dynamic):Void {
         #if flash
@@ -86,11 +86,11 @@ class BasicBoss<T, U> {
     function onErrorIncoming(error:Dynamic):Void throw error;
 
     #if (neko || cpp)
-        static function encloseInstance<T, U>(clazz:Class<BasicWorker<T, U>>, incoming:Dynamic->Void):Thread {
+        static function encloseInstance<TInput, TOutput>(clazz:Class<BasicWorker<TInput, TOutput>>, incoming:Dynamic->Void):Thread {
             function func():Void {
-                var __clazz:Class<BasicWorker<T, U>> = Thread.readMessage(true);
-                var __outgoing:U->Void = Thread.readMessage(true);
-                var instance:BasicWorker<T, U> = Type.createInstance(__clazz, []);
+                var __clazz:Class<BasicWorker<TInput, TOutput>> = Thread.readMessage(true);
+                var __outgoing:TOutput->Void = Thread.readMessage(true);
+                var instance:BasicWorker<TInput, TOutput> = Type.createInstance(__clazz, []);
                 instance.breathe(Thread.readMessage.bind(true), __outgoing);
             }
 

@@ -1,69 +1,50 @@
 package net.rezmason.utils.workers;
 
-import haxe.io.Bytes;
+typedef Job<TInput, TOutput> = {work:TInput, recip:TOutput->Void};
 
-import haxe.Timer;
+class TempAgency<TInput, TOutput> {
 
-class TempAgency<T, U> extends BasicBoss<T, U> {
+    public var onDone:Void->Void;
 
-    var queue:Array<U->Void>;
-    var started:Bool;
+    var queue:Array<Job<TInput, TOutput>>;
+    var temps:Array<QuickBoss<TInput, TOutput>>;
+    var idleTemps:Array<QuickBoss<TInput, TOutput>>;
+    var activeJobsByTemp:Map<QuickBoss<TInput, TOutput>, Job<TInput, TOutput>>;
 
-    var countdownTime:Int;
-    var countdownTimer:Timer;
-    var complainLoudly:Bool;
-
-    public function new(bytes:Bytes, countdownTime:Int = 5000, complainLoudly:Bool = false):Void {
-        this.countdownTime = countdownTime;
-        this.complainLoudly = complainLoudly;
-        started = false;
+    public function new(core, numQuickBosss:Int = 1):Void {
         queue = [];
-        super(bytes);
-        startup();
-    }
-
-    public function addWork(work:T, recip:U->Void):Void {
-        queue.push(recip);
-        send(work);
-        cancelCountdown();
-        startup();
-    }
-
-    #if flash
-        override function onIncoming(data:Dynamic):Void {
-            while (incoming.messageAvailable) super.onIncoming(data);
+        temps = [];
+        for (i in 0...numQuickBosss) {
+            var temp = new QuickBoss(core);
+            temp.onReceive = receiveWork.bind(temp);
+            temp.start();
+            temps.push(temp);
         }
-    #end
-
-    override function receive(data:U):Void {
-        queue.shift()(data);
-        if (queue.length == 0) beginCountdown();
+        idleTemps = temps.copy();
+        activeJobsByTemp = new Map();
     }
 
-    override function onErrorIncoming(error:Dynamic):Void if (complainLoudly) throw error;
-
-    function startup():Void {
-        if (!started) {
-            started = true;
-            start();
-        }
+    public function addWork(work:TInput, recip:TOutput->Void):Void {
+        queue.push({work:work, recip:recip});
+        var temp = idleTemps.pop();
+        if (temp != null) assignWork(temp);
     }
 
-    inline function beginCountdown():Void {
-        countdownTimer = new Timer(countdownTime);
-        countdownTimer.run = onCountdown;
+    public function die():Void for (temp in temps) temp.die();
+
+    function receiveWork(temp:QuickBoss<TInput, TOutput>, data:TOutput):Void {
+        activeJobsByTemp[temp].recip(data);
+        assignWork(temp);
     }
 
-    inline function onCountdown():Void {
-        countdownTimer = null;
-        die();
-        started = false;
-    }
-
-    inline function cancelCountdown():Void {
-        if (countdownTimer != null) {
-            countdownTimer.stop();
-            countdownTimer = null;
+    function assignWork(temp:QuickBoss<TInput, TOutput>):Void {
+        var job = queue.pop();
+        if (job == null) {
+            idleTemps.push(temp);
+            if (idleTemps.length == temps.length && onDone != null) onDone();
+        } else {
+            activeJobsByTemp[temp] = job;
+            temp.send(job.work);
         }
     }
 }
