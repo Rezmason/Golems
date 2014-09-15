@@ -24,7 +24,10 @@ package net.rezmason.utils.workers;
 
     var dead:Bool;
 
+    private function __initAliases():Void {}
+    
     public function new():Void {
+        __initAliases();
         #if flash
             incoming = Worker.current.getSharedProperty('incoming');
             outgoing = Worker.current.getSharedProperty('outgoing');
@@ -89,6 +92,7 @@ package net.rezmason.utils.workers;
         var packageName:Array<String> = path.copy();
         var className:String = packageName.pop();
 
+        fields = fields.filter(function(field) return field.name != '__initAliases');
 
         for (field in fields) {
             if (field.name == 'main' && field.access.has(AStatic)) {
@@ -123,6 +127,25 @@ package net.rezmason.utils.workers;
             kind:FVar(null, macro null),
             pos:Context.currentPos(),
         });
+
+        if (Context.defined('flash')) {        
+            // Crack open the input and output types, find classes inside and alias them
+            var aliasExpressions:Array<Expr> = [];
+            aliasExpressions.push(macro var registerAlias = untyped __global__["flash.net.registerClassAlias"]);
+
+            for (type in Context.getLocalClass().get().superClass.params) {
+                switch (type) {
+                    case TInst(t, params):
+                        var classType = t.get();
+                        var qname:String = '${classType.pack.join('.')}.${classType.name}';
+                        aliasExpressions.push(macro registerAlias($v{qname}, $i{classType.name}));
+                    case _:
+                }
+            }
+
+            var func:Function = {params:[], args:[], ret:null, expr:macro $b{aliasExpressions}};
+            fields.push({ name:'__initAliases', access:[APrivate, AOverride], kind:FFun(func), pos:Context.currentPos() });
+        }
 
 
         return fields;

@@ -1,7 +1,7 @@
 import net.rezmason.utils.workers.QuickBoss;
 import net.rezmason.utils.workers.Golem;
 
-typedef PIGBoss = QuickBoss<Int, Int>;
+class PIGBoss extends QuickBoss<Int, Int> {}
 
 class Primes
 {
@@ -9,7 +9,7 @@ class Primes
     static var done:Bool = false;
 
     static function main():Void {
-        pig = new PIGBoss(Golem.rise('primes.hxml'), onPrime, null);
+        pig = new PIGBoss(Golem.rise('primes_golems.hxml'), onPrime, null);
         pig.start();
         pig.send(0);
 
