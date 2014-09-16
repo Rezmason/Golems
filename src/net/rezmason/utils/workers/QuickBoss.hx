@@ -1,6 +1,6 @@
 package net.rezmason.utils.workers;
 
-#if !macro @:autoBuild(net.rezmason.utils.workers.BasicBoss.build()) #end class QuickBoss<TInput, TOutput> extends BasicBoss<TInput, TOutput> {
+class QuickBoss<TInput, TOutput> extends BasicBoss<TInput, TOutput> {
 
     public var onReceive:TOutput->Void;
     public var onError:Dynamic->Void;

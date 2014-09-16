@@ -17,14 +17,19 @@ import haxe.io.Bytes;
     import haxe.macro.Expr;
 #end
 
-#if (flash || js)
+#if flash
+    typedef Core<TInput, TOutput> = {
+        var bytes:Bytes;
+        var qnames:Array<String>;
+    };
+#elseif js
     typedef Core<TInput, TOutput> = Bytes;
 #elseif (neko || cpp)
     typedef Core<TInput, TOutput> = Class<BasicWorker<TInput, TOutput>>;
     typedef Worker = Thread;
 #end
 
-#if !macro @:autoBuild(net.rezmason.utils.workers.BasicBoss.build()) #end class BasicBoss<TInput, TOutput> {
+class BasicBoss<TInput, TOutput> {
 
     var worker:Worker;
 
@@ -38,7 +43,9 @@ import haxe.io.Bytes;
     public function new(core:Core<TInput, TOutput>):Void {
         __initAliases();
         #if flash
-            worker = WorkerDomain.current.createWorker(core.getData());
+            var registerAlias = untyped __global__["flash.net.registerClassAlias"];
+            for (qname in core.qnames) registerAlias(qname, Type.resolveClass(qname));
+            worker = WorkerDomain.current.createWorker(core.bytes.getData());
             incoming = worker.createMessageChannel(Worker.current);
             outgoing = Worker.current.createMessageChannel(worker);
             worker.setSharedProperty('incoming', outgoing);
@@ -109,40 +116,6 @@ import haxe.io.Bytes;
             return thread;
         }
     #end
-
-    macro public static function build():Array<Field> {
-        var fields:Array<Field> = Context.getBuildFields();
-
-        fields = fields.filter(function(field) return field.name != '__initAliases');
-
-        if (Context.defined('flash')) {
-            // Crack open the input and output types, find classes inside and alias them
-            var aliasExpressions:Array<Expr> = [];
-            aliasExpressions.push(macro var registerAlias = untyped __global__["flash.net.registerClassAlias"]);
-
-            for (type in Context.getLocalClass().get().superClass.params) {
-                switch (type) {
-                    case TInst(t, params):
-                        var classType = t.get();
-                        var isValidType:Bool = true;
-                        switch (classType.kind) {
-                            case KTypeParameter(constraints): isValidType = false;
-                            case _:
-                        }
-                        if (isValidType) {
-                            var qname:String = '${classType.pack.join('.')}.${classType.name}';
-                            aliasExpressions.push(macro registerAlias($v{qname}, $i{classType.name}));
-                        }
-                    case _:
-                }
-            }
-
-            var func:Function = {params:[], args:[], ret:null, expr:macro $b{aliasExpressions}};
-            fields.push({ name:'__initAliases', access:[APrivate, AOverride], kind:FFun(func), pos:Context.currentPos() });
-        }
-
-        return fields;
-    }
 }
 
 #if js
