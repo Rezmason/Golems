@@ -3,7 +3,7 @@
 -swf golems/TestWorker.swf
 -swf-version 11.4
 -cp test
--cp src
+-lib golems
 #-debug
 -dce no
 
@@ -13,6 +13,6 @@
 -main net.rezmason.utils.workers.TestWorker
 -js golems/TestWorker.js
 -cp test
--cp src
+-lib golems
 #-debug
 -dce no

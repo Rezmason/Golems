@@ -1,3 +1,3 @@
 -x Simple
 -cp ./
--cp ../../src
+-lib golems

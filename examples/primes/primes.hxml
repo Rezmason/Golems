@@ -1,16 +1,16 @@
 -main Primes
 -neko Primes.n
--cp ../../src
+-lib golems
 
 --next
 
 -main Primes
 -swf Primes.swf
 -swf-version 11.4
--cp ../../src
+-lib golems
 
 --next
 
 -main Primes
 -js Primes.js
--cp ../../src
+-lib golems

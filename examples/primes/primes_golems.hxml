@@ -2,7 +2,7 @@
 -main PrimeIntegerGenerator
 -swf pig.swf
 -swf-version 11.4
--cp ../../src
+-lib golems
 -dce no
 
 --next
@@ -10,5 +10,5 @@
 ##GOLEM##
 -main PrimeIntegerGenerator
 -js pig.js
--cp ../../src
+-lib golems
 -dce no

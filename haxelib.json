@@ -1,0 +1,11 @@
+{
+    "name": "golems",
+    "url" : "https://github.com/Rezmason/Golems/",
+    "license": "LGPL",
+    "tags": ["cross", "worker", "flash", "neko", "cpp", "js", "concurrent", "thread"],
+    "description": "A macro-backed system for compiling and embedding workers into larger builds. Supports Flash, JS, NekoVM and C++ targets.",
+    "version": "1.0.0",
+    "releasenote": "Initial release.",
+    "contributors": ["Rezmason"],
+    "dependencies": {}
+}

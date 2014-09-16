@@ -2,7 +2,7 @@
 -main TestMain
 -lib hamcrest
 -lib munit
--cp src
+-lib golems
 
 -cp test
 -swf-version 11.4
@@ -13,7 +13,7 @@
 -main TestMain
 -lib hamcrest
 -lib munit
--cp src
+-lib golems
 
 -cp test
 -js build/js_test.js
@@ -25,7 +25,7 @@
 -main TestMain
 -lib hamcrest
 -lib munit
--cp src
+-lib golems
 
 -cp test
 -neko build/neko_test.n
