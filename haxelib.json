@@ -4,8 +4,8 @@
     "license": "LGPL",
     "tags": ["cross", "worker", "flash", "neko", "cpp", "js", "concurrent", "thread"],
     "description": "A macro-backed system for compiling and embedding workers into larger builds. Supports Flash, JS, NekoVM and C++ targets.",
-    "version": "1.0.0",
-    "releasenote": "Initial release.",
+    "version": "1.1.0",
+    "releasenote": "Switching Flash messages to Haxe serialization.",
     "contributors": ["Rezmason"],
     "dependencies": {}
 }
