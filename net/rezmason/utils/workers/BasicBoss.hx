@@ -43,7 +43,7 @@ class BasicBoss<TInput, TOutput> {
     public function new(core:Core<TInput, TOutput>):Void {
         __initAliases();
         #if flash
-            var registerAlias = untyped __global__["flash.net.registerClassAlias"];
+            var registerAlias:String->Class<Dynamic>->Void = untyped __global__["flash.net.registerClassAlias"];
             for (qname in core.qnames) registerAlias(qname, Type.resolveClass(qname));
             worker = WorkerDomain.current.createWorker(core.bytes.getData());
             incoming = worker.createMessageChannel(Worker.current);

@@ -131,7 +131,7 @@ package net.rezmason.utils.workers;
         if (Context.defined('flash')) {        
             // Crack open the input and output types, find classes inside and alias them
             var aliasExpressions:Array<Expr> = [];
-            aliasExpressions.push(macro var registerAlias = untyped __global__["flash.net.registerClassAlias"]);
+            aliasExpressions.push(macro var registerAlias:String->Class<Dynamic>->Void = untyped __global__["flash.net.registerClassAlias"]);
 
             for (type in Context.getLocalClass().get().superClass.params) {
                 switch (type) {
