@@ -9,7 +9,7 @@ class Primes
     static var done:Bool = false;
 
     static function main():Void {
-        pig = new PIGBoss(Golem.rise(Int, Int, 'primes_golems.hxml'), onPrime, null);
+        pig = new PIGBoss(Golem.rise('primes_golems.hxml'), onPrime, null);
         pig.start();
         pig.send(0);
 

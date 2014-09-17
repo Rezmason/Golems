@@ -3,6 +3,8 @@ package net.rezmason.utils.workers;
 #if flash
     import flash.system.MessageChannel;
     import flash.system.Worker;
+    import haxe.Serializer;
+    import haxe.Unserializer;
 #end
 
 #if macro
@@ -42,7 +44,10 @@ package net.rezmason.utils.workers;
 
     @:final function send(data:TOutput):Void {
         #if flash
-            outgoing.send(data);
+            var useCache:Bool = Serializer.USE_CACHE;
+            Serializer.USE_CACHE = true;
+            outgoing.send(Serializer.run(data));
+            Serializer.USE_CACHE = useCache;
         #elseif js
             self.postMessage(data);
         #elseif (neko || cpp)
@@ -63,7 +68,7 @@ package net.rezmason.utils.workers;
 
     @:final function onIncoming(data:Dynamic):Void {
         #if flash
-            data = incoming.receive();
+            data = Unserializer.run(incoming.receive());
         #elseif js
             data = data.data;
         #elseif (neko || cpp)
@@ -127,26 +132,6 @@ package net.rezmason.utils.workers;
             kind:FVar(null, macro null),
             pos:Context.currentPos(),
         });
-
-        if (Context.defined('flash')) {        
-            // Crack open the input and output types, find classes inside and alias them
-            var aliasExpressions:Array<Expr> = [];
-            aliasExpressions.push(macro var registerAlias:String->Class<Dynamic>->Void = untyped __global__["flash.net.registerClassAlias"]);
-
-            for (type in Context.getLocalClass().get().superClass.params) {
-                switch (type) {
-                    case TInst(t, params):
-                        var classType = t.get();
-                        var qname:String = '${classType.pack.join('.')}.${classType.name}';
-                        aliasExpressions.push(macro registerAlias($v{qname}, $i{classType.name}));
-                    case _:
-                }
-            }
-
-            var func:Function = {params:[], args:[], ret:null, expr:macro $b{aliasExpressions}};
-            fields.push({ name:'__initAliases', access:[APrivate, AOverride], kind:FFun(func), pos:Context.currentPos() });
-        }
-
 
         return fields;
     }

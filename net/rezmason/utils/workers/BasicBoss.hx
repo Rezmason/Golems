@@ -6,6 +6,8 @@ import haxe.io.Bytes;
     import flash.system.MessageChannel;
     import flash.system.Worker;
     import flash.system.WorkerDomain;
+    import haxe.Serializer;
+    import haxe.Unserializer;
 #elseif cpp
     import cpp.vm.Thread;
 #elseif neko
@@ -17,12 +19,7 @@ import haxe.io.Bytes;
     import haxe.macro.Expr;
 #end
 
-#if flash
-    typedef Core<TInput, TOutput> = {
-        var bytes:Bytes;
-        var qnames:Array<String>;
-    };
-#elseif js
+#if (flash || js)
     typedef Core<TInput, TOutput> = Bytes;
 #elseif (neko || cpp)
     typedef Core<TInput, TOutput> = Class<BasicWorker<TInput, TOutput>>;
@@ -38,14 +35,9 @@ class BasicBoss<TInput, TOutput> {
         var outgoing:MessageChannel;
     #end
 
-    private function __initAliases():Void {}
-
     public function new(core:Core<TInput, TOutput>):Void {
-        __initAliases();
         #if flash
-            var registerAlias:String->Class<Dynamic>->Void = untyped __global__["flash.net.registerClassAlias"];
-            for (qname in core.qnames) registerAlias(qname, Type.resolveClass(qname));
-            worker = WorkerDomain.current.createWorker(core.bytes.getData());
+            worker = WorkerDomain.current.createWorker(core.getData());
             incoming = worker.createMessageChannel(Worker.current);
             outgoing = Worker.current.createMessageChannel(worker);
             worker.setSharedProperty('incoming', outgoing);
@@ -77,7 +69,10 @@ class BasicBoss<TInput, TOutput> {
 
     public function send(data:TInput):Void {
         #if flash
-            outgoing.send(data);
+            var useCache:Bool = Serializer.USE_CACHE;
+            Serializer.USE_CACHE = true;
+            outgoing.send(Serializer.run(data));
+            Serializer.USE_CACHE = useCache;
         #elseif js
             worker.postMessage(data);
         #elseif (neko || cpp)
@@ -89,7 +84,7 @@ class BasicBoss<TInput, TOutput> {
 
     function onIncoming(data:Dynamic):Void {
         #if flash
-            data = incoming.receive();
+            data = Unserializer.run(incoming.receive());
         #elseif js
             data = data.data;
         #end
