@@ -42,28 +42,30 @@ class Simple {
 }
 
 class WorkerExample extends BasicWorker<Int,String> {
-	override function receive(data:Int):Void {
+	override function process(data:Int):String {
+		var work = '';
 		var last:Int = 0;
 		var now:Int = 0;
 
-		send('work starting');
+		work += 'work starting\n';
 		var start = haxe.Timer.stamp();
 		var done = false;
 
 		while(!done) {
 			now = Std.int(haxe.Timer.stamp() - start);
 			if(now != last) {
-				send('work clock: $now');
+				work += 'work clock: $now\n';
 				last = now;
 			}
 
 			// > 2 seconds in, finish the work
 			if(now >= 2) {
 				done = true;
-				send('work done');
+				work += 'work done\n';
 			}
 		}
 
-		send('done');
+		work += 'done\n';
+		return work;
 	}
 }

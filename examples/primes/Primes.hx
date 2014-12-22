@@ -1,7 +1,7 @@
 import net.rezmason.utils.workers.QuickBoss;
 import net.rezmason.utils.workers.Golem;
 
-typedef PIGBoss = QuickBoss<Int, Int>;
+typedef PIGBoss = QuickBoss<Int, Array<Int>>;
 
 class Primes
 {
@@ -9,19 +9,17 @@ class Primes
     static var done:Bool = false;
 
     static function main():Void {
-        pig = new PIGBoss(Golem.rise('primes_golems.hxml'), onPrime, null);
+        pig = new PIGBoss(Golem.rise('primes_golems.hxml'), onPrimes, null);
         pig.start();
-        pig.send(0);
+        pig.send(100);
 
         #if (neko || cpp) while (!done) {} #end
     }
 
-    static function onPrime(i:Int):Void {
-        trace(i);
-        if (i > 100) {
-            pig.die();
-            done = true;
-            trace("That'll do pig, that'll do");
-        }
+    static function onPrimes(primes:Array<Int>):Void {
+        trace(primes.join('\n'));
+        pig.die();
+        done = true;
+        trace("That'll do pig, that'll do");
     }
 }

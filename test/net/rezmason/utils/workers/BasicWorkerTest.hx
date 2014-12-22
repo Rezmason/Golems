@@ -66,5 +66,5 @@ class BasicWorkerTest
 }
 
 class TestBoss extends QuickBoss<Int, String> {
-    public function new(onReceive, onError):Void super(Golem.rise(Int, String, 'testWorker.hxml'), onReceive, onError);
+    public function new(onReceive, onError):Void super(Golem.rise('testWorker.hxml'), onReceive, onError);
 }

@@ -6,8 +6,8 @@ class TestWorker extends BasicWorker<Int, String> {
         super();
     }
 
-    override function receive(data:Int):Void {
-        if (data == -1) sendError('BLARG');
-        else send(Std.string(data));
+    override function process(data) {
+        if (data == -1) throw 'BLARG';
+        return Std.string(data);
     }
 }

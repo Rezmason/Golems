@@ -42,46 +42,40 @@ package net.rezmason.utils.workers;
         dead = false;
     }
 
-    @:final function send(data:TOutput):Void {
-        #if flash
+    @:final function onIncoming(input:Dynamic):Void {
+        #if flash input = Unserializer.run(incoming.receive());
+        #elseif js input = input.data;
+        #elseif (neko || cpp) dead = dead || input == '__die__';
+        #end
+
+        if (!dead) {
+            try {
+                var output = process(input);
+                #if flash outgoing.send(safeSerialize(output));
+                #elseif js self.postMessage(output);
+                #elseif (neko || cpp) outgoing(output);
+                #end
+            } catch (error:Dynamic) {
+                var errorData:Dynamic = {__error:error};
+                #if flash outgoing.send(errorData);
+                #elseif js self.postMessage(errorData);
+                #elseif (neko || cpp) outgoing(errorData);
+                #end
+            }
+        }
+    }
+
+    function process(data:TInput):Null<TOutput> return null;
+
+    #if flash
+        static inline function safeSerialize(object:Dynamic):String {
             var useCache:Bool = Serializer.USE_CACHE;
             Serializer.USE_CACHE = true;
-            outgoing.send(Serializer.run(data));
+            var output = Serializer.run(object);
             Serializer.USE_CACHE = useCache;
-        #elseif js
-            self.postMessage(data);
-        #elseif (neko || cpp)
-            outgoing(data);
-        #end
-    }
-
-    @:final function sendError(error:Dynamic):Void {
-        var data:Dynamic = {__error:error};
-        #if flash
-            outgoing.send(data);
-        #elseif js
-            self.postMessage(data);
-        #elseif (neko || cpp)
-            outgoing(data);
-        #end
-    }
-
-    @:final function onIncoming(data:Dynamic):Void {
-        #if flash
-            data = Unserializer.run(incoming.receive());
-        #elseif js
-            data = data.data;
-        #elseif (neko || cpp)
-            if (data == '__die__') {
-                dead = true;
-                return;
-            }
-        #end
-
-        receive(data);
-    }
-
-    function receive(data:TInput):Void {}
+            return output;
+        }
+    #end
 
     #if (neko || cpp)
         @:allow(net.rezmason.utils.workers.BasicBoss)
