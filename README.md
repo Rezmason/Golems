@@ -78,7 +78,9 @@ When you build your application, `Golem::rise` will run the Haxe compiler agains
 What's not in Golems
 --------------------
 
-I suspect the current version of the library will support eighty to ninety percent of what people want from a Haxe concurrency library. Bitcoin miners, bioinformatics lab technicians and AI researchers might wish that Golems had a richer feature set, such as more nuanced communications between threads or shared memory. I'd point them to another library, *if there was one*. 
+I suspect the current version of the library will support eighty to ninety percent of what people want from a Haxe concurrency library. Bitcoin miners, bioinformatics lab technicians and AI researchers might wish that Golems had a richer feature set, such as more nuanced communications between threads or shared memory.
+
+![I'd recommend another library, IF THERE WAS ONE.](http://i.imgur.com/CP0oX7s.gif)
 
 Maybe Golems will become that library. I'm not only open to contributions, I would in fact like someone else to maintain it, preferably someone who uses concurrency more frequently than I do, or who is more actively involved in the Haxe community than I am.
 
