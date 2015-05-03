@@ -15,6 +15,9 @@ class Golem {
 
     macro public static function rise(buildPath:String):Expr {
 
+        // Resolve the build path because on some targets (for example ios) it must be relativ to the build directory
+        buildPath = Context.resolvePath(buildPath);
+
         var key:String = 'main';
         if (Context.defined('flash')) key = 'swf';
         else if (Context.defined('js')) key = 'js';
