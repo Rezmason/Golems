@@ -4,8 +4,8 @@
     "license": "LGPL",
     "tags": ["cross", "worker", "flash", "neko", "cpp", "js", "concurrent", "thread"],
     "description": "A macro-backed system for compiling and embedding workers into larger builds. Supports Flash, JS, NekoVM and C++ targets.",
-    "version": "1.2.0",
-    "releasenote": "Replaced worker send/receive with process function, improved examples and added to the readme file",
+    "version": "1.2.1",
+    "releasenote": "Merged in a fix for iOS targets from Nathan H.",
     "contributors": ["Rezmason"],
     "dependencies": {}
 }
