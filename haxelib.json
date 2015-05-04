@@ -4,8 +4,8 @@
     "license": "LGPL",
     "tags": ["cross", "worker", "flash", "neko", "cpp", "js", "concurrent", "thread"],
     "description": "A macro-backed system for compiling and embedding workers into larger builds. Supports Flash, JS, NekoVM and C++ targets.",
-    "version": "1.2.1",
-    "releasenote": "Merged in a fix for iOS targets from Nathan H.",
+    "version": "1.2.2",
+    "releasenote": "Forgot to serialize errors in the Flash target.",
     "contributors": ["Rezmason"],
     "dependencies": {}
 }
