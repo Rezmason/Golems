@@ -57,7 +57,7 @@ package net.rezmason.utils.workers;
                 #end
             } catch (error:Dynamic) {
                 var errorData:Dynamic = {__error:error};
-                #if flash outgoing.send(errorData);
+                #if flash outgoing.send(safeSerialize(errorData));
                 #elseif js self.postMessage(errorData);
                 #elseif (neko || cpp) outgoing(errorData);
                 #end

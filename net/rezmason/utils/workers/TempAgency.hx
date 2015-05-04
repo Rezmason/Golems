@@ -5,6 +5,7 @@ typedef Job<TInput, TOutput> = {work:TInput, recip:TOutput->Void};
 class TempAgency<TInput, TOutput> {
 
     public var onDone:Void->Void;
+    public var onError:Dynamic->Void;
 
     var queue:Array<Job<TInput, TOutput>>;
     var temps:Array<QuickBoss<TInput, TOutput>>;
@@ -17,6 +18,7 @@ class TempAgency<TInput, TOutput> {
         for (i in 0...numQuickBosss) {
             var temp = new QuickBoss(core);
             temp.onReceive = receiveWork.bind(temp);
+            temp.onError = handleError;
             temp.start();
             temps.push(temp);
         }
@@ -31,6 +33,8 @@ class TempAgency<TInput, TOutput> {
     }
 
     public function die():Void for (temp in temps) temp.die();
+
+    function handleError(error:Dynamic):Void if (onError != null) onError(error);
 
     function receiveWork(temp:QuickBoss<TInput, TOutput>, data:TOutput):Void {
         activeJobsByTemp[temp].recip(data);
