@@ -1,0 +1,3 @@
+zip Golems.zip -r . -i "examples*" "haxelib.json" "LICENSE" "README.md" "net*" "testWorker.hxml"
+haxelib submit Golems.zip
+rm Golems.zip
