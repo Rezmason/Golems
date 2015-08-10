@@ -4,8 +4,8 @@
     "license": "LGPL",
     "tags": ["cross", "worker", "flash", "neko", "cpp", "js", "concurrent", "thread"],
     "description": "A macro-backed system for compiling and embedding workers into larger builds. Supports Flash, JS, NekoVM and C++ targets.",
-    "version": "1.2.2",
-    "releasenote": "Forgot to serialize errors in the Flash target.",
+    "version": "1.2.3",
+    "releasenote": "Removing unused __initAlias; JS target now explicitly imports haxe.Callstack into worker target.",
     "contributors": ["Rezmason"],
     "dependencies": {}
 }

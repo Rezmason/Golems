@@ -57,6 +57,7 @@ class BasicWorkerTest
         function onError(error:Dynamic):Void {
             boss.die();
             resultHandler();
+            Assert.areEqual(error, 'BLARG');
         }
 
         boss = new TestBoss(null, onError);

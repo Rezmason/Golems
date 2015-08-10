@@ -7,6 +7,10 @@ package net.rezmason.utils.workers;
     import haxe.Unserializer;
 #end
 
+#if js
+    import haxe.CallStack;
+#end
+
 #if macro
     import haxe.macro.Context;
     import haxe.macro.Expr;
@@ -26,10 +30,7 @@ package net.rezmason.utils.workers;
 
     var dead:Bool;
 
-    private function __initAliases():Void {}
-    
     public function new():Void {
-        __initAliases();
         #if flash
             incoming = Worker.current.getSharedProperty('incoming');
             outgoing = Worker.current.getSharedProperty('outgoing');
@@ -90,8 +91,6 @@ package net.rezmason.utils.workers;
         var path:Array<String> = Context.getLocalClass().get().module.split('.');
         var packageName:Array<String> = path.copy();
         var className:String = packageName.pop();
-
-        fields = fields.filter(function(field) return field.name != '__initAliases');
 
         for (field in fields) {
             if (field.name == 'main' && field.access.has(AStatic)) {
