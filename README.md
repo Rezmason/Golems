@@ -85,6 +85,11 @@ I suspect the current version of the library will support eighty to ninety perce
 Maybe Golems will become that library. I'm not only open to contributions, I would in fact like someone else to maintain it, preferably someone who uses concurrency more frequently than I do, or who is more actively involved in the Haxe community than I am.
 
 
+I should probably mention
+-------------------------
+
+If you're using Golems in an Adobe AIR project, your workers will be created with application sandbox privileges.
+
 License
 =======
 
