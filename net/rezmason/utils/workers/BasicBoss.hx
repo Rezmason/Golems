@@ -37,7 +37,7 @@ class BasicBoss<TInput, TOutput> {
 
     public function new(core:Core<TInput, TOutput>):Void {
         #if flash
-            worker = WorkerDomain.current.createWorker(core.getData());
+            worker = WorkerDomain.current.createWorker(core.getData(), true);
             incoming = worker.createMessageChannel(Worker.current);
             outgoing = Worker.current.createMessageChannel(worker);
             worker.setSharedProperty('incoming', outgoing);
