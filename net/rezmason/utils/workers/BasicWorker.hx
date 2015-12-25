@@ -1,6 +1,7 @@
 package net.rezmason.utils.workers;
 
 #if flash
+    import flash.errors.Error;
     import flash.system.MessageChannel;
     import flash.system.Worker;
     import haxe.Serializer;
@@ -57,13 +58,25 @@ package net.rezmason.utils.workers;
                 #elseif (neko || cpp) outgoing(output);
                 #end
             } catch (error:Dynamic) {
-                var errorData:Dynamic = {__error:error};
+                var errorData:Dynamic = formatError(error);
                 #if flash outgoing.send(safeSerialize(errorData));
                 #elseif js self.postMessage(errorData);
                 #elseif (neko || cpp) outgoing(errorData);
                 #end
             }
         }
+    }
+
+    inline function formatError(error:Dynamic):Dynamic {
+        #if flash
+            if( untyped __is__(error, __global__["Error"]) ) {
+                var flashError:Error = error;
+                var details = flashError.getStackTrace();
+                if (details == null) details = flashError.message;
+                error = details;
+            }
+        #end
+        return {__error:error};
     }
 
     function process(data:TInput):Null<TOutput> return null;

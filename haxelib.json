@@ -4,8 +4,8 @@
     "license": "LGPL",
     "tags": ["cross", "worker", "flash", "neko", "cpp", "js", "concurrent", "thread"],
     "description": "A macro-backed system for compiling and embedding workers into larger builds. Supports Flash, JS, NekoVM and C++ targets.",
-    "version": "1.2.4",
-    "releasenote": "ActionScript workers are now granted AIR sandbox privileges.",
+    "version": "1.2.5",
+    "releasenote": "Flash error messages are untangled before they get serialized. (Code copied from Haxe serializer.)",
     "contributors": ["Rezmason"],
     "dependencies": {}
 }
