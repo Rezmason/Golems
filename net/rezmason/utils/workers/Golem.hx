@@ -60,7 +60,7 @@ class Golem {
                 golems.push(buildPath);
                 var origin:String = Sys.getCwd();
                 if (path.dir != null) Sys.setCwd(path.dir);
-                Sys.command('haxe', properBuild.split(' ').map(cleanStr).concat(['-D', 'GOLEM']));
+                Sys.command('haxe', properBuild.split(' ').map(cleanStr).concat(['-D', 'GOLEM']).filter(function(arg) return arg != ''));
                 Sys.setCwd (origin);
                 if (path.dir != null) outputPath = Path.addTrailingSlash(path.dir) + outputPath;
                 if (!FileSystem.exists(outputPath)) throw 'Golem "$buildPath" output not found. Build failed?';
